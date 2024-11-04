@@ -1,14 +1,26 @@
 ---
 import Default from "../layouts/Default.astro";
-import PocketBase from "pocketbase"
+import {pb} from "../services/pocketbase"
 
-const pb = new PocketBase("https://kvantorium-perm.pockethost.io");
-const projects = await pb.collection("projects").getList(1, 3)
+interface Author {
+  firstName: string;
+  lastName: string;
+  birthday: Date;
+}
 
+const projects = await pb.collection("projects").getList(1, 10, { expand: "authors" })
 ---
 
 <Default>
-  <div class="p-5 space-y-3">
-  {projects.items.map(project => <pre>{JSON.stringify(project, null, 2)}</pre>)}
+  <div class="container px-5 py-20 space-y-7">
+    <div class="text-3xl font-medium">
+      Кванториум.Проекты
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2 md:grid-cols-3">{projects.items.map(project => <div class="rounded-lg p-5 border">
+      <div>{project.title}</div>
+      <div class="text-sm text-neutral-500">{project.expand?.authors.map((author: Author) => `${author.firstName} ${author.lastName}`).join(", ")}</div>
+    </div>)}</div>
   </div>
+
+  <div class="py-9 w-full text-center text-xs text-neutral-400 absolute bottom-0 left-0">Это тестовый сайт. Вся информация здесь исключительно для ознакомления.</div>
 </Default>
