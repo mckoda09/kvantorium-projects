@@ -1,0 +1,14 @@
+---
+import Default from "../layouts/Default.astro";
+import PocketBase from "pocketbase"
+
+const pb = new PocketBase("https://kvantorium-perm.pockethost.io");
+const projects = await pb.collection("projects").getList(1, 3)
+
+---
+
+<Default>
+  <div class="p-5 space-y-3">
+  {projects.items.map(project => <pre>{JSON.stringify(project, null, 2)}</pre>)}
+  </div>
+</Default>
