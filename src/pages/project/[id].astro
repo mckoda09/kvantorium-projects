@@ -1,0 +1,27 @@
+---
+import {pb, type Author} from "../../services/pocketbase"
+import Default from "../../layouts/Default.astro"
+
+export async function getStaticPaths() {
+  const projects = await pb.collection("projects").getList(1, 10)
+  return projects.items.map(project => ({params: {id: project.id}}));
+}
+
+const { id } = Astro.params
+
+const project = await pb.collection("projects").getOne(id, {expand: "authors"})
+---
+
+<Default>
+  <div class="p-7 space-y-7">
+    <div class="mt-24 space-y-3">
+      <a href="/" class="text-neutral-500">{"<-"} Назад</a>
+      <div class="text-3xl font-medium">{project.title}</div>
+      <div>{project.expand?.authors.map(({firstName, lastName}: Author) => [firstName,lastName].join(" ")).join(", ")}</div>
+    </div>
+
+    <div>
+
+    </div>
+  </div>
+</Default>
