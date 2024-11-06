@@ -4,6 +4,7 @@ import { getProject } from "../../services/pocketbase";
 
 const { id } = Astro.params;
 
+if (!id) return new Response(null, { status: 404 });
 const project = await getProject(id);
 
 export const prerender = false;
