@@ -4,7 +4,8 @@ export default {
   theme: {
     fontFamily: {
       sans: ["Inter", "sans-serif"],
+      exo: ["'Exo 2'", "sans-serif"],
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };

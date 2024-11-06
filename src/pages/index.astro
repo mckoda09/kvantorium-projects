@@ -1,23 +1,40 @@
 ---
+import { Image } from "astro:assets";
 import Default from "../layouts/Default.astro";
-import { pb } from "../services/pocketbase";
-import {type Author} from "../services/pocketbase"
+import { listProjects, pb } from "../services/pocketbase";
 
-const projects = await pb.collection("projects").getList(1, 10, {expand: "authors,conference"})
+const projects = await listProjects();
+
+export const prerender = false;
 ---
 
 <Default>
-  <div class="p-7 space-y-7">
-    <div class="mt-24 text-3xl font-medium">Кванториум.Проекты</div>
+  <div class="p-7 space-y-1">
+    <div class="font-exo text-3xl font-medium mt-16">Кванториум.Проекты</div>
+    <div class="text-neutral-500">тестовый сайт</div>
+  </div>
 
-    <div class="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {projects.items.map(project => <a href={"/project/" + project.id} class="space-y-3">
-        <img src={pb.files.getUrl(project, project.cover, {thumb: "640x360"})} alt={project.id}>
-        <div>
-          <div>{project.title}</div>
-          <div class="text-neutral-500">{project.expand?.authors.map(({firstName, lastName}: Author) => [firstName,lastName].join(" ")).join(", ")}</div>
-        </div>
-      </a>)}
-    </div>
+  <div
+    class="p-7 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+  >
+    {
+      projects.map((project) => (
+        <a href={`/project/${project.id}`} class="space-y-3">
+          <Image
+            alt={project.title}
+            src={pb.files.getUrl(project, project.cover, { thumb: "640x360" })}
+            width={640}
+            height={360}
+            class="w-full"
+          />
+          <div>
+            <div>{project.title}</div>
+            <div class="text-neutral-500 text-sm">
+              {project.expand?.area.title}
+            </div>
+          </div>
+        </a>
+      ))
+    }
   </div>
 </Default>
