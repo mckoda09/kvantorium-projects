@@ -1,23 +1,17 @@
 ---
-import type { QuantumData } from "@/components/Quantum.astro";
-import Layout from "@/layouts/Layout.astro";
 import { quantums } from "@/quantums";
-import { Icon } from "astro-icon/components";
 import { Project } from "astro:db";
-import { db, eq } from "astro:db";
+import type { QuantumData } from "./Quantum.astro";
 
-export const prerender = false;
-const { id } = Astro.params;
-
-const [project] = await db
-  .select()
-  .from(Project)
-  .where(eq(Project.id, Number(id)));
-
-const quantum = quantums[
-  project.category as keyof typeof quantums
-] as QuantumData;
-
+interface Props {
+  id: number;
+  title: string;
+  category: string;
+  preview: string;
+  description: string;
+}
+const { title, id, category, preview, description } = Astro.props;
+const quantum = quantums[category as keyof typeof quantums] as QuantumData;
 const bgVariants = {
   blue: "bg-blue-500/10",
   indigo: "bg-indigo-500/10",
@@ -46,23 +40,17 @@ const textVariants = {
 };
 ---
 
-<Layout>
-  <a href="javascript:history.back()">
-    <div class="border-b p-5 flex items-center justify-between">
-      <Icon name="lucide:arrow-left" class="text-2xl" />
+<a href={`/project/${id}`}>
+  <div class="space-y-3">
+    <img src={preview} alt={title} class="rounded-lg" />
+    <div>
+      <div class="font-medium text-lg">{title}</div>
+      <div class="text-hint">{description}</div>
     </div>
-  </a>
-
-  <div class="px-5 pt-16 container space-y-3">
-    <div class="text-3xl font-medium">{project.title}</div>
     <div
       class={`${bgVariants[quantum.color]} ${textVariants[quantum.color]} text-sm w-fit px-2 py-0.5 rounded-lg`}
     >
       {quantum.title}
     </div>
   </div>
-
-  <div class="p-5 container">
-    {project.description}
-  </div>
-</Layout>
+</a>

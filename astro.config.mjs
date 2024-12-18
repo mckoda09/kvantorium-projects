@@ -1,20 +1,14 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
-
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
+import alpinejs from "@astrojs/alpinejs";
+import db from "@astrojs/db";
+import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    svelte(),
-    tailwind({
-      applyBaseStyles: false,
-    }),
-  ],
-
-  output: "hybrid",
+  integrations: [tailwind(), alpinejs(), db(), icon()],
   adapter: vercel(),
 });

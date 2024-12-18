@@ -1,40 +1,76 @@
 ---
-import { Image } from "astro:assets";
-import Default from "../layouts/Default.astro";
-import { listProjects, pb } from "../services/pocketbase";
-
-const projects = await listProjects();
+import Quantum, { type QuantumData } from "@/components/Quantum.astro";
+import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { db } from "astro:db";
+import { Project } from "astro:db";
+import ProjectPreview from "@/components/ProjectPreview.astro";
 
 export const prerender = false;
+
+const quantums: QuantumData[] = [
+  { slug: "it", title: "IT-квантум", icon: "laptop", color: "blue" },
+  {
+    slug: "media",
+    title: "Медиаквантум",
+    icon: "clapperboard",
+    color: "indigo",
+  },
+  { slug: "aero", title: "Аэроквантум", icon: "plane", color: "cyan" },
+  { slug: "bio", title: "Биоквантум", icon: "sprout", color: "green" },
+  { slug: "space", title: "Космоквантум", icon: "rocket", color: "slate" },
+  { slug: "nano", title: "Наноквантум", icon: "atom", color: "violet" },
+  { slug: "hitech", title: "Хайтек", icon: "house", color: "orange" },
+  { slug: "photon", title: "Фотоника", icon: "sun", color: "yellow" },
+  { slug: "vr", title: "VR / AR", icon: "joystick", color: "purple" },
+  { slug: "design", title: "Промдизайн", icon: "dribbble", color: "teal" },
+  { slug: "robo", title: "Робоквантум", icon: "bot", color: "lime" },
+];
+
+const projects = await db.select().from(Project).limit(10);
 ---
 
-<Default>
-  <div class="p-7 space-y-1">
-    <div class="font-exo text-3xl font-medium mt-16">Кванториум.Проекты</div>
-    <div class="text-neutral-500">тестовый сайт</div>
+<Layout>
+  <div class="border-b flex items-center justify-between">
+    <div class="p-5">
+      <Icon name="lucide:atom" class="text-2xl" />
+    </div>
+    <a href="/about" class="p-5">
+      <div class="text-hint">О сайте</div>
+    </a>
   </div>
 
-  <div
-    class="p-7 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-  >
-    {
-      projects.map((project) => (
-        <a href={`/project/${project.id}`} class="space-y-3">
-          <Image
-            alt={project.title}
-            src={pb.files.getUrl(project, project.cover, { thumb: "640x360" })}
-            width={640}
-            height={360}
-            class="w-full"
-          />
-          <div>
-            <div>{project.title}</div>
-            <div class="text-neutral-500 text-sm">
-              {project.expand?.area.title}
-            </div>
-          </div>
-        </a>
-      ))
-    }
+  <div class="container px-5 py-16 space-y-5">
+    <div class="text-3xl font-medium">Кванториум.Проекты</div>
+    <div class="text-hint max-w-">
+      Каталог проектов, разработанных учащимися детского технопарка
+      Кванториум.Фотоника
+    </div>
   </div>
-</Default>
+
+  <div class="container p-5 space-y-3">
+    <div class="font-medium">Квантумы</div>
+    <div
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
+    >
+      {quantums.map((quantum) => <Quantum {...quantum} />)}
+    </div>
+  </div>
+
+  <div class="container p-5 space-y-3">
+    <div class="font-medium">Проекты</div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {projects.map((project) => <ProjectPreview {...project} />)}
+    </div>
+  </div>
+
+  <div class="text-center text-sm text-hint py-16">
+    <div>© Кванториум.Проекты 2024</div>
+    <div>
+      Сайт разработал <a
+        href="https://mckoda09.ru"
+        class="text-link hover:underline">mckoda09</a
+      >
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,36 @@
+---
+import { db, Project, eq } from "astro:db";
+import Layout from "@/layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import ProjectPreview from "@/components/ProjectPreview.astro";
+
+export const prerender = false;
+const { slug } = Astro.params;
+
+const projects = await db
+  .select()
+  .from(Project)
+  .where(eq(Project.category, slug || ""));
+---
+
+<Layout>
+  <a href="/">
+    <div class="border-b p-5 flex items-center justify-between">
+      <Icon name="lucide:arrow-left" class="text-2xl" />
+    </div>
+  </a>
+
+  {
+    projects.length ? (
+      <div class="container p-5">
+        {projects.map((project) => (
+          <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <ProjectPreview {...project} />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="p-5 container">Проектов в этой категории пока что нет...</div>
+    )
+  }
+</Layout>
