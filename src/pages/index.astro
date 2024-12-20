@@ -27,7 +27,7 @@ const quantums: QuantumData[] = [
   { slug: "robo", title: "Робоквантум", icon: "bot", color: "lime" },
 ];
 
-const projects = await db.select().from(Project).limit(10);
+const projects = await db.select().from(Project).limit(50);
 ---
 
 <Layout>
